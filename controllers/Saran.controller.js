@@ -15,12 +15,14 @@ const findAllSaran = async (req, res) => {
 const insertSaran = async (req, res) => {
     try {
         const { id_saran, judul, deskripsi, foto, latitude, longitude } = req.body;
-
+console.log("ini filenya", req.file.path);
+const filename = req.file ? req.file.filename : null;
+console.log("ini namanya", filename);
         const newSaran = await Saran.create({
             id_saran,
             judul,
             deskripsi,
-            foto,
+            foto: filename,
             latitude,
             longitude,
         });
