@@ -1,10 +1,10 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
-const Saran = sequelize.define(
-    "Saran",
+const Pengaduan = sequelize.define(
+    "Pengaduan",
     {
-        id_saran: {
+        id_pengaduan: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
@@ -16,6 +16,10 @@ const Saran = sequelize.define(
         deskripsi: {
             type: DataTypes.TEXT,
             allowNull: false
+        },
+        alamat: {                     
+            type: DataTypes.STRING,
+            allowNull: true
         },
         foto: {
             type: DataTypes.STRING,
@@ -35,8 +39,8 @@ const Saran = sequelize.define(
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
-        tableName: "saran"
+        tableName: "pengaduan"
     }
 )
 
-module.exports = Saran;
+module.exports = Pengaduan;

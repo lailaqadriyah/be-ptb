@@ -1,9 +1,9 @@
-const Saran = require('../models/SaranModel');
+const Pengaduan = require('../models/PengaduanModel');
 
-const toSaranResponse = (item) => {
+const toPengaduanResponse = (item) => {
     const data = item && item.toJSON ? item.toJSON() : item;
     return {
-        id_saran: data.id_saran,
+        id_pengaduan: data.id_pengaduan,
         judul: data.judul,
         deskripsi: data.deskripsi,
         foto: data.foto ?? null,
@@ -14,39 +14,41 @@ const toSaranResponse = (item) => {
     };
 };
 
-// Fungsi untuk mengambil semua data saran
-const findAllSaran = async (req, res) => {
+// Fungsi untuk mengambil semua data pengaduan
+const findAllPengaduan = async (req, res) => {
     try {
-        const datasaran = await Saran.findAll();
-        res.json(datasaran.map(toSaranResponse));
+        const datapengaduan = await Pengaduan.findAll();
+
+        res.json(datapengaduan.map(toPengaduanResponse));
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
 
-// Fungsi untuk memasukkan data saran baru
-const insertSaran = async (req, res) => {
+// Fungsi untuk memasukkan data pengaduan baru
+const insertPengaduan = async (req, res) => {
     try {
         const { 
-            id_saran, 
             judul, 
             deskripsi, 
+            alamat,        
             latitude, 
             longitude 
         } = req.body;
 
         const fotoPath = req.file ? 'uploads/' + req.file.filename : null;
 
-        const newSaran = await Saran.create({
-            id_saran,
+        const newPengaduan = await Pengaduan.create({
             judul,
             deskripsi,
+            alamat,        
             foto: fotoPath,
             latitude,
             longitude,
         });
-        res.json(toSaranResponse(newSaran));
+
+        res.json(toPengaduanResponse(newPengaduan));
     } catch (error) {
         console.log(error);
         res
@@ -55,20 +57,21 @@ const insertSaran = async (req, res) => {
     }
 };
 
-// Fungsi untuk memperbarui data saran
-const updateSaran = async (req, res) => {
+// Fungsi untuk memperbarui data pengaduan
+const updatePengaduan = async (req, res) => {
     try {
-        const idSaran = req.params.id;
+        const idPengaduan = req.params.id;
         const { 
             judul, 
             deskripsi, 
+            alamat,        
             latitude, 
             longitude 
         } = req.body;
         
-        const existingData = await Saran.findOne({
+        const existingData = await Pengaduan.findOne({
             where: {
-                id_saran: idSaran,
+                id_pengaduan: idPengaduan,
             },
         });
 
@@ -78,6 +81,7 @@ const updateSaran = async (req, res) => {
 
         if (judul !== undefined) existingData.judul = judul;
         if (deskripsi !== undefined) existingData.deskripsi = deskripsi;
+        if (alamat !== undefined) existingData.alamat = alamat;
         if (latitude !== undefined) existingData.latitude = latitude;
         if (longitude !== undefined) existingData.longitude = longitude;
 
@@ -86,13 +90,14 @@ const updateSaran = async (req, res) => {
         }
 
         await existingData.save();
-        const refreshed = await Saran.findOne({
+
+        const refreshed = await Pengaduan.findOne({
             where: {
-                id_saran: idSaran,
+                id_pengaduan: idPengaduan,
             },
         });
 
-        res.json(toSaranResponse(refreshed));
+        res.json(toPengaduanResponse(refreshed));
     } catch (error) {
         console.log(error);
         res
@@ -101,22 +106,22 @@ const updateSaran = async (req, res) => {
     }
 };
 
-// Fungsi untuk menghapus data saran
-const deleteSaran = async (req, res) => {
+// Fungsi untuk menghapus data pengaduan
+const deletePengaduan = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const existingData = await Saran.findOne({
-            where: { id_saran: id }
+        const existingData = await Pengaduan.findOne({
+            where: { id_pengaduan: id }
         });
 
         if (!existingData) {
-            return res.status(404).json({ message: "Saran tidak ditemukan" });
+            return res.status(404).json({ message: "Pengaduan tidak ditemukan" });
         }
 
         await existingData.destroy();
         
-        res.json({ message: "Berhasil menghapus saran" });
+        res.json({ message: "Berhasil menghapus pengaduan" });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -124,8 +129,8 @@ const deleteSaran = async (req, res) => {
 };
 
 module.exports = {
-    findAllSaran,
-    insertSaran,
-    updateSaran,
-    deleteSaran,
+    findAllPengaduan,
+    insertPengaduan,
+    updatePengaduan,
+    deletePengaduan,
 };
